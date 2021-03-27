@@ -17,9 +17,9 @@ public class MentorResponse {
     private List<Mentored> mentored;
 
     public MentorResponse(Mentor mentor) {
-        this.name = name;
-        this.bio = bio;
-        this.knowledge = knowledge;
-        this.mentored = mentored;
+        this.name = mentor.getName();
+        this.bio = mentor.getBio();
+        this.knowledge = mentor.getKnowledge();
+        this.mentored = mentor.getMentored();
     }
 }

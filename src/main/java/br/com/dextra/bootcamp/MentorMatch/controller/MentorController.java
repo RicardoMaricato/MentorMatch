@@ -21,7 +21,6 @@ import java.util.List;
 public class MentorController {
 
     private final MentorService mentorService;
-    private final UnexistentEntityException unexistentEntityException;
 
     @GetMapping
     @ApiOperation(value = "Listar mentores")
@@ -51,7 +50,6 @@ public class MentorController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        return null;
     }
 
     @PostMapping

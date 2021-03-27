@@ -16,8 +16,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Value("${info.app.version}")
-    String appVersion;
+//    @Value("${info.app.version}")
+//    String appVersion;
 
     @Bean
     public Docket productApi() {
@@ -32,9 +32,9 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Seu título")
-                .description("Sua descrição")
-                .version(appVersion)
+                .title("API de Mentoria")
+                .description("API para gerenciar mentores e mentorados")
+                .version("1.0.0")
                 .contact(new Contact("Ricardo Maricato",
                         "https://github.com/RicardoMaricato",
                         "ricardo.maricato@hotmail.com"))

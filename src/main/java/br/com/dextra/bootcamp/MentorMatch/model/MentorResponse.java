@@ -11,12 +11,14 @@ import java.util.List;
 @NoArgsConstructor
 public class MentorResponse {
 
+    private Long id;
     private String name;
     private String bio;
     private String knowledge;
     private List<Mentored> mentored;
 
     public MentorResponse(Mentor mentor) {
+        this.id = mentor.getId();
         this.name = mentor.getName();
         this.bio = mentor.getBio();
         this.knowledge = mentor.getKnowledge();

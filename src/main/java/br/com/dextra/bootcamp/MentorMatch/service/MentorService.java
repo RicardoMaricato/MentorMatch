@@ -36,6 +36,10 @@ public class MentorService {
         return mentorRepository.save(mentor);
     }
 
+    public Mentor save(Mentor mentor) {
+        return mentorRepository.save(mentor);
+    }
+
     private Mentor findOnDataBaseById(Long id) throws UnexistentEntityException {
         Optional<Mentor> mentor = mentorRepository.findById(id);
         if(mentor.isEmpty()) {

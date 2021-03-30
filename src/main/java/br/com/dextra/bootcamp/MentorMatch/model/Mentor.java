@@ -29,4 +29,12 @@ public class Mentor {
 
     @OneToMany(mappedBy = "mentor")
     private List<Mentored> mentored;
+
+    public Mentor(MentorResponse mentorResponse) {
+        this.id = mentorResponse.getId();
+        this.name = mentorResponse.getName();
+        this.bio = mentorResponse.getBio();
+        this.knowledge = mentorResponse.getKnowledge();
+        this.mentored = mentorResponse.getMentored();
+    }
 }

@@ -4,6 +4,12 @@ import br.com.dextra.bootcamp.MentorMatch.exception.UnexistentEntityException;
 import br.com.dextra.bootcamp.MentorMatch.model.Mentor;
 import br.com.dextra.bootcamp.MentorMatch.model.MentorResponse;
 import br.com.dextra.bootcamp.MentorMatch.service.MentorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "Mentor")
 @RequestMapping(value = "api/v1/mentors")
 public class MentorController {
 
@@ -26,7 +33,7 @@ public class MentorController {
     @ApiOperation(value = "Listar mentores")
     @ApiResponses(value = {
             @ApiResponse(code = HttpServletResponse.SC_OK, message = "Listar mentores", response = MentorResponse.class),
-            @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Não foi encontrado o Mentores", response = MentorResponse.class)
+            @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Não foi encontrado Mentores", response = MentorResponse.class)
     })
     public ResponseEntity<List<MentorResponse>> list() {
         List<MentorResponse> returnedList = mentorService.list();
@@ -71,6 +78,23 @@ public class MentorController {
         mentor.setId(id);
         Mentor returnedMentor = mentorService.update(mentor);
         return ResponseEntity.status(HttpStatus.OK).body(returnedMentor.getId());
+    }
+
+    @PatchMapping(value = "/{id}")
+    @ApiOperation(value = "Alteração do mentor")
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpServletResponse.SC_OK, message = "Mentor alterado", response = Mentor.class),
+            @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "Mentor não encontrado", response = Mentor.class)
+    })
+    public ResponseEntity<Mentor> updatePatch(@PathVariable(name = "id") Long id, @RequestBody JsonPatch patch)
+            throws UnexistentEntityException, JsonPatchException, JsonProcessingException {
+        MentorResponse mentorResponse = mentorService.findOne(id);
+        Mentor mentor = new Mentor(mentorResponse);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode mentorJsonNode = objectMapper.convertValue(mentor, JsonNode.class);
+        JsonNode patchJsonNode = patch.apply(mentorJsonNode);
+        Mentor mentorPersist = objectMapper.treeToValue(patchJsonNode, Mentor.class);
+        return ResponseEntity.ok(mentorService.save(mentorPersist));
     }
 
     @DeleteMapping

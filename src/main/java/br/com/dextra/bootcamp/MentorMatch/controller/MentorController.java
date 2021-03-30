@@ -49,14 +49,9 @@ public class MentorController {
             @ApiResponse(code = HttpServletResponse.SC_OK, message = "Mentor por id", response = MentorResponse.class),
             @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "Não foi possível encontrar o mentor especificado", response = MentorResponse.class)
     })
-    public ResponseEntity<Object> findOne(@PathVariable(name = "id") Long id) {
-        try {
+    public ResponseEntity<Object> findOne(@PathVariable(name = "id") Long id) throws UnexistentEntityException {
             MentorResponse mentorResponse = mentorService.findOne(id);
             return ResponseEntity.ok(mentorResponse);
-        } catch (UnexistentEntityException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
     }
 
     @PostMapping
@@ -88,13 +83,7 @@ public class MentorController {
     })
     public ResponseEntity<Mentor> updatePatch(@PathVariable(name = "id") Long id, @RequestBody JsonPatch patch)
             throws UnexistentEntityException, JsonPatchException, JsonProcessingException {
-        MentorResponse mentorResponse = mentorService.findOne(id);
-        Mentor mentor = new Mentor(mentorResponse);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode mentorJsonNode = objectMapper.convertValue(mentor, JsonNode.class);
-        JsonNode patchJsonNode = patch.apply(mentorJsonNode);
-        Mentor mentorPersist = objectMapper.treeToValue(patchJsonNode, Mentor.class);
-        return ResponseEntity.ok(mentorService.save(mentorPersist));
+        return ResponseEntity.ok(mentorService.patch(id, patch));
     }
 
     @DeleteMapping

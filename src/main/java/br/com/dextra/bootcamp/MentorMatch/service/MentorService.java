@@ -4,6 +4,11 @@ import br.com.dextra.bootcamp.MentorMatch.exception.UnexistentEntityException;
 import br.com.dextra.bootcamp.MentorMatch.model.Mentor;
 import br.com.dextra.bootcamp.MentorMatch.model.MentorResponse;
 import br.com.dextra.bootcamp.MentorMatch.repository.MentorRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +51,17 @@ public class MentorService {
             throw new UnexistentEntityException("O mentor não existe no banco de dados");
         }
         return mentor.get();
+    }
+
+    public Mentor patch(Long id, JsonPatch patch) throws UnexistentEntityException
+            , JsonProcessingException, JsonPatchException {
+        MentorResponse mentorResponse = this.findOne(id);
+        Mentor mentor = new Mentor(mentorResponse);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode mentorJsonNode = objectMapper.convertValue(mentor, JsonNode.class);
+        JsonNode patchJsonNode = patch.apply(mentorJsonNode);
+        Mentor mentorPersist = objectMapper.treeToValue(patchJsonNode, Mentor.class);
+        return this.save(mentorPersist);
     }
 }
 
